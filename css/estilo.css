@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+@keyframes lado {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+@keyframes bajar {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+body {
+    background-color: black;
+    color: white;
+}
+#contenedor {
+    margin: 0 auto;
+    width: 80%;
+    height: 100vh;
+}
+#panel-juego, #panel-inicio {
+    width: 100%;
+    height: 100%;
+}
+/* panel inicio */
+#panel-inicio {
+    animation: bajar 1s ease;
+}
+#panel-inicio, #panel-juego > div {    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#panel-inicio > * {
+    margin: 10px;
+}
+#panel-juego > div > * {
+    margin: 5px;
+}
+#panel-inicio p {
+    font-size: 2rem;
+}
+/* */
+.btn-text {
+    padding: 10px;
+    border: 1px solid white;
+    color: white;
+}
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.btn {
+    border-radius: 5px;
+    border: 1px solid white;
+    padding: 20px;
+    background-color: transparent;
+    background-origin: content-box;
+    background-repeat: no-repeat;
+    min-height: 150px;
+    min-width: 150px;
+}
+.b-circulo, .b-cruz, .b-empatado, .b-cancelado {
+    background-position: center;
+    background-size: cover;
+}
+.b-circulo {
+    background-image: url('../img/circulo.png');
+}
+.b-cruz {
+    background-image: url('../img/cruz.png');
+}
+.b-empatado {
+    background-image: url('../img/empate.png');
+}
+.b-cancelado {
+    background-image: url('../img/cancelado.png');
+}
+
+/* panel de juego */
+#panel-juego {
+    display: none;
+    animation: lado 1s ease;
+}
+#juego-botones {
+    width: 35vw;
+    height: 35vw;
+    margin: 0 auto;    
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+}
+#juego-resultado {
+    display: grid;
+    grid-template-columns: repeat(5, 40px);
+    gap: 5px;
+}
+#juego-resultado > div {
+    width: 100%;
+    height: 40px;
+    border: 1px solid white;
+}

@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
-        <link rel="stylesheet" type="text/css" href="oreon.css">
+        <title>Tic Tac Toe</title>
+        <link rel="stylesheet" type="text/css" href="css/estilo.css">
+        <meta charset="utf-8">
     </head>
     <body>
-        <div id="cuerpo">
-            <div id="opciones">
-                <div id="contenedor">
-                    <p>Elige</p>
-                    <button id="btnCirculo"></button>
-                    <button id="btnCruz"></button>
-                    <button id="btnInicia">Inicia</button>
-                </div>                                           
+        <div id="contenedor">
+            <div id="panel-inicio">
+                <p>Elige tu ficha</p>
+                <div>
+                    <button class="btn b-circulo" onclick="elegirFicha(this)"></button>
+                    <button class="btn b-cruz" onclick="elegirFicha(this)"></button>
+                </div>                
+                <button class="btn-text" onclick="iniciarPartida()">Iniciar</button>
             </div>
             <div id="panel-juego">
-                <p id = "msj-inicia">¡Inicia el juego!</p>
-                <div id="tablero">
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                    <button></button>
-                </div>
-            </div>
-            <div id="resultado">
-
+                <div>
+                    <p id="mensaje-turno"></p>             
+                    <div id="juego-botones">
+                        <button class="btn" onclick="tirar(this, 0)"></button>
+                        <button class="btn" onclick="tirar(this, 1)"></button>
+                        <button class="btn" onclick="tirar(this, 2)"></button>
+                        <button class="btn" onclick="tirar(this, 3)"></button>
+                        <button class="btn" onclick="tirar(this, 4)"></button>
+                        <button class="btn" onclick="tirar(this, 5)"></button>
+                        <button class="btn" onclick="tirar(this, 6)"></button>
+                        <button class="btn" onclick="tirar(this, 7)"></button>
+                        <button class="btn" onclick="tirar(this, 8)"></button>                   
+                    </div>
+                    <p id="mensaje-juego"></p>
+                    <div>
+                        <button onclick="resetear()" class="btn-text" >Siguiente partida</button>
+                        <button class="btn-text" onclick="irAInicio()" >Regresar a inicio</button>
+                    </div>
+                    <div id="juego-resultado">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div> 
             </div>
         </div>
-        <script src="p.js"></script>
+        <script src="js/dog.js"></script>        
     </body>
 </html>
