@@ -18,6 +18,14 @@ class Juego {
             enemigo: 0, jugador: 0
         }
     }
+    borrar() {
+        this.restablecer();
+        this.numeroPartidasJugadas = 0;
+        var paneles = document.querySelectorAll("#juego-resultado > div");
+        paneles.forEach(panel => {
+            panel.classList.remove("b-circulo","b-cruz","b-empate","b-cancelado");
+        });
+    }
     obtenerNumeroDeTiros() {
         var arre = this.tablero.filter(function (x) { return x != "*"; });
         return arre.length;
@@ -27,7 +35,7 @@ class Juego {
         this.juegoFinalizado = false;
         document.querySelectorAll("#juego-botones button").forEach(
             boton => {
-                boton.classList.remove("b-circulo","b-cruz");
+                boton.classList.remove("b-circulo","b-cruz","b-empate","b-cancelado");
                 boton.disabled = false;
             }
         );
@@ -159,6 +167,7 @@ function irAInicio() {
     document.querySelectorAll("#panel-inicio .btn").forEach(
         boton => boton.style.backgroundColor = 'transparent'
     );
+    juego.borrar();
 }
 function elegirFicha(e) {
     document.querySelectorAll("#panel-inicio .btn").forEach(boton => boton.style.backgroundColor = 'transparent'); 
