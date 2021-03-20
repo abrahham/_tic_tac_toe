@@ -25,6 +25,7 @@ class Juego {
         paneles.forEach(panel => {
             panel.classList.remove("b-circulo","b-cruz","b-empate","b-cancelado");
         });
+        this.desmarcarBotonesVictoria();
     }
     obtenerNumeroDeTiros() {
         var arre = this.tablero.filter(function (x) { return x != "*"; });
@@ -39,7 +40,8 @@ class Juego {
                 boton.disabled = false;
             }
         );
-        this.textoJuego("");        
+        this.textoJuego("");      
+        this.desmarcarBotonesVictoria();  
     }
     tirar(e, posicion) {
         this.tablero[posicion] = this.ficha;
@@ -127,10 +129,10 @@ class Juego {
     }
     validarVictoria(ficha) {
         /* Verificar si uno de los participantes ha hecho un cruce ganador */
-        var paneles = document.querySelectorAll("#juego-resultado > div");
+        var paneles = document.querySelectorAll("#juego-resultado > div");        
         this.movsGanadores.forEach(fila => {
             if(this.tablero[fila.pini] == ficha && this.tablero[fila.pmed] == ficha && this.tablero[fila.pfin] == ficha)
-            {                
+            {
                 if(ficha == this.ficha){
                     this.textoJuego("Haz ganado :(");
                     this.victorias.jugador += 1;
@@ -141,12 +143,23 @@ class Juego {
                     paneles[this.numeroPartidasJugadas].classList.add((this.fichaContraria == 'o')  ? "b-circulo" : "b-cruz");
                 }
                 this.juegoFinalizado = true;
-                this.bloquearTablero();                
+                this.bloquearTablero();
+                this.marcarBotonesVictoria([fila.pini,fila.pmed,fila.pfin]);
             }
         })
-        if(this.obtenerNumeroDeTiros() == 9) {
-        
-        }
+        if(this.obtenerNumeroDeTiros() == 9 && !this.juegoFinalizado) 
+            paneles[this.numeroPartidasJugadas].classList.add("b-empatado");        
+    }
+    marcarBotonesVictoria(arre) {
+        var botones = document.querySelectorAll("#juego-botones button");
+        arre.forEach(idx => {
+            botones[idx].style.backgroundColor = 'red';
+        });
+    }
+    desmarcarBotonesVictoria() {
+        document.querySelectorAll("#juego-botones button").forEach(boton => {
+            boton.style.backgroundColor = 'transparent';
+        });
     }
 }
 var juego;
@@ -181,8 +194,10 @@ function tirar(e, posicion) {
 }
 function resetear() {
     if(!juego.juegoFinalizado) {
-        var paneles = document.querySelectorAll("#juego-resultado > div");
-        paneles[juego.numeroPartidasJugadas].classList.add("b-cancelado");
+        if(juego.obtenerNumeroDeTiros() < 9) {
+            var paneles = document.querySelectorAll("#juego-resultado > div");
+            paneles[juego.numeroPartidasJugadas].classList.add("b-cancelado");
+        }       
     }
     juego.restablecer();
     juego.numeroPartidasJugadas += 1;     
