@@ -23,7 +23,7 @@ class Juego {
         this.numeroPartidasJugadas = 0;
         var paneles = document.querySelectorAll("#juego-resultado > div");
         paneles.forEach(panel => {
-            panel.classList.remove("b-circulo","b-cruz","b-empate","b-cancelado");
+            panel.classList.remove("b-circulo","b-cruz","b-empatado","b-cancelado");
         });
         this.desmarcarBotonesVictoria();
     }
@@ -36,7 +36,7 @@ class Juego {
         this.juegoFinalizado = false;
         document.querySelectorAll("#juego-botones button").forEach(
             boton => {
-                boton.classList.remove("b-circulo","b-cruz","b-empate","b-cancelado");
+                boton.classList.remove("b-circulo","b-cruz","b-empatado","b-cancelado");
                 boton.disabled = false;
             }
         );
@@ -59,10 +59,9 @@ class Juego {
             this.validarVictoria(this.fichaContraria);
             document.querySelector("#mensaje-turno").innerText = "Tu turno";
         }, 600);
-    }
-    /* métodos viejos */
+    }    
     estaDisponible(posicion) {
-        /* Verifica si la posicion recibida está ocupada por una ficha */
+        /* Verifica si la posicion recibida no está ocupada por una ficha */
         return this.tablero[posicion] == "*";
     }
     obtenerTiro() {        
@@ -71,7 +70,7 @@ class Juego {
         if(arreglo.length == 0) arreglo = this.posibleJugada(this.ficha);
         if(arreglo.length == 0) arreglo = this.obtenerPosicionesDisponibles(this.tablero);               
         var x = Math.floor(Math.random() * arreglo.length);        
-        var tiro = (arreglo.includes(4)) ? 4 : arreglo[x];  //areglar, analizar casos para el uso del centro
+        var tiro = (arreglo.includes(4)) ? 4 : arreglo[x];
         return tiro;
     }  
     obtenerPosicionesDisponibles(arreglo) {
@@ -83,6 +82,7 @@ class Juego {
         return arre;
     }
     posibleJugada(ficha) {
+        /* Obtiene posiciones media y final de una fila a partir de una posición inicial (de la ficha indicada) */
         var arreglo = this.movsGanadores.reduce((arre, reg, idx) => {  
             if(this.tablero[reg.pini] == ficha && this.estaDisponible(reg.pmed) && this.estaDisponible(reg.pfin)) {
                 arre.push(reg.pmed);
@@ -122,6 +122,7 @@ class Juego {
        return this.posicionesDeTiroGanador(this.fichaContraria);
     }
     bloquearTablero() {
+        /* Evitar que los botones del tablero sean seleccionados */
         document.querySelectorAll("#juego-botones button").forEach(boton => boton.disabled = true);
     }
     textoJuego(mensaje) {
@@ -193,12 +194,14 @@ function tirar(e, posicion) {
     e.classList.add((juego.ficha == 'o') ? "b-circulo" : "b-cruz");
 }
 function resetear() {
-    if(!juego.juegoFinalizado) {
-        if(juego.obtenerNumeroDeTiros() < 9) {
-            var paneles = document.querySelectorAll("#juego-resultado > div");
-            paneles[juego.numeroPartidasJugadas].classList.add("b-cancelado");
-        }       
-    }
-    juego.restablecer();
-    juego.numeroPartidasJugadas += 1;     
+    if(juego.numeroPartidasJugadas < 4) {
+        if(!juego.juegoFinalizado) {
+            if(juego.obtenerNumeroDeTiros() < 9) {
+                var paneles = document.querySelectorAll("#juego-resultado > div");
+                paneles[juego.numeroPartidasJugadas].classList.add("b-cancelado");
+            }       
+        }
+        juego.restablecer();
+        juego.numeroPartidasJugadas += 1;     
+    } else juego.bloquearTablero();
 }
