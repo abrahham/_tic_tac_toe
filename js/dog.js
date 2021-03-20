@@ -56,8 +56,8 @@ class Juego {
             this.tablero[posicion] = this.fichaContraria;
             boton.classList.add((this.fichaContraria == 'o') ? "b-circulo" : "b-cruz");
             boton.disabled = true;
-            this.validarVictoria(this.fichaContraria);
             document.querySelector("#mensaje-turno").innerText = "Tu turno";
+            this.validarVictoria(this.fichaContraria);            
         }, 600);
     }    
     estaDisponible(posicion) {
