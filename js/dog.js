@@ -15,19 +15,19 @@ class Juego {
             {pini : 6, pmed: 7, pfin: 8},
         ];
         this.victorias = {
-            enemigo: 0, jugador: 0
+            enemigo: 0, jugador: 0, enemigoIndices:[], jugadorIndices:[]
         }
     }
     borrar() {
         this.restablecer();
-        this.numeroPartidasJugadas = 0;
-        var paneles = document.querySelectorAll("#juego-resultado > div");
-        paneles.forEach(panel => {
+        this.numeroPartidasJugadas = 0;        
+        this.panelesResultado().forEach(panel => {
             panel.classList.remove("b-circulo","b-cruz","b-empatado","b-cancelado");
         });
         this.desmarcarBotonesVictoria();
     }
     obtenerNumeroDeTiros() {
+        /* Obtiene el contador de tiros de un juego individual */
         var arre = this.tablero.filter(function (x) { return x != "*"; });
         return arre.length;
     }
@@ -41,7 +41,9 @@ class Juego {
             }
         );
         this.textoJuego("");      
-        this.desmarcarBotonesVictoria();  
+        this.desmarcarBotonesVictoria();
+        var moneda = Math.floor(Math.random() * 2);
+        if(moneda == 0) this.tiroEnemigo(); else this.textoJuego("Tu turno");
     }
     tirar(e, posicion) {
         this.tablero[posicion] = this.ficha;
@@ -49,22 +51,25 @@ class Juego {
         this.validarVictoria(this.ficha);
     }
     tiroEnemigo() {
-        document.querySelector("#mensaje-turno").innerText = "Mi turno pequeño humano";
+        this.textoJuego("Mi turno pequeño humano");
         setTimeout(() => {
             var posicion = this.obtenerTiro();
             var boton = document.querySelectorAll("#panel-juego .btn")[posicion];
             this.tablero[posicion] = this.fichaContraria;
             boton.classList.add((this.fichaContraria == 'o') ? "b-circulo" : "b-cruz");
+            this.validarVictoria(this.fichaContraria);
             boton.disabled = true;
-            document.querySelector("#mensaje-turno").innerText = "Tu turno";
-            this.validarVictoria(this.fichaContraria);            
-        }, 600);
+        }, 500);        
+        setTimeout(() => {    
+            this.textoJuego("Tu turno");
+        }, 500);
     }    
     estaDisponible(posicion) {
         /* Verifica si la posicion recibida no está ocupada por una ficha */
         return this.tablero[posicion] == "*";
     }
-    obtenerTiro() {        
+    obtenerTiro() {
+        /* Determina la mejor posición (tiro) a marcar  del lado del enemigo */
         var arreglo = (this.tiroOfensivo().length > 0) ? this.tiroOfensivo() : this.tiroDefensivo();
         if(arreglo.length == 0) arreglo = this.posibleJugada(this.fichaContraria);
         if(arreglo.length == 0) arreglo = this.posibleJugada(this.ficha);
@@ -130,26 +135,46 @@ class Juego {
     }
     validarVictoria(ficha) {
         /* Verificar si uno de los participantes ha hecho un cruce ganador */
-        var paneles = document.querySelectorAll("#juego-resultado > div");        
         this.movsGanadores.forEach(fila => {
             if(this.tablero[fila.pini] == ficha && this.tablero[fila.pmed] == ficha && this.tablero[fila.pfin] == ficha)
             {
                 if(ficha == this.ficha){
                     this.textoJuego("Haz ganado :(");
                     this.victorias.jugador += 1;
-                    paneles[this.numeroPartidasJugadas].classList.add((this.ficha== 'o')  ? "b-circulo" : "b-cruz");
+                    this.victorias.jugadorIndices.push(this.numeroPartidasJugadas);
+                    this.panelesResultado()[this.numeroPartidasJugadas].classList.add((this.ficha== 'o')  ? "b-circulo" : "b-cruz");
                 } else {
                     this.textoJuego("He ganado ;)");
                     this.victorias.enemigo += 1;
-                    paneles[this.numeroPartidasJugadas].classList.add((this.fichaContraria == 'o')  ? "b-circulo" : "b-cruz");
+                    this.panelesResultado()[this.numeroPartidasJugadas].classList.add((this.fichaContraria == 'o')  ? "b-circulo" : "b-cruz");
+                    this.victorias.enemigoIndices.push(this.numeroPartidasJugadas);
                 }
                 this.juegoFinalizado = true;
                 this.bloquearTablero();
                 this.marcarBotonesVictoria([fila.pini,fila.pmed,fila.pfin]);
             }
         })
-        if(this.obtenerNumeroDeTiros() == 9 && !this.juegoFinalizado) 
-            paneles[this.numeroPartidasJugadas].classList.add("b-empatado");        
+        if(this.obtenerNumeroDeTiros() == 9 && !this.juegoFinalizado) {
+            this.panelesResultado()[this.numeroPartidasJugadas].classList.add("b-empatado");
+            document.querySelector("#mensaje-turno").innerText = "Empate";
+        }
+        if(this.numeroPartidasJugadas == 4 && this.juegoFinalizado) {            
+            if(this.victorias.enemigo > 0 || this.victorias.jugador > 0) {
+                if(this.victorias.enemigo > this.victorias.jugador) {
+                    this.victorias.enemigoIndices.forEach(idx => {
+                        this.panelesResultado()[idx].style.backgroundColor = 'red';
+                    });
+                }
+                if(this.victorias.enemigo < this.victorias.jugador) {                    
+                    this.victorias.jugadorIndices.forEach(idx => {
+                        this.panelesResultado()[idx].style.backgroundColor = 'red';
+                    });
+                }
+            }            
+        }
+    }
+    panelesResultado() {
+        return document.querySelectorAll("#juego-resultado > div");
     }
     marcarBotonesVictoria(arre) {
         var botones = document.querySelectorAll("#juego-botones button");
@@ -161,6 +186,9 @@ class Juego {
         document.querySelectorAll("#juego-botones button").forEach(boton => {
             boton.style.backgroundColor = 'transparent';
         });
+        this.panelesResultado().forEach(panel => {
+            panel.style.backgroundColor = 'transparent';
+        })
     }
 }
 var juego;
@@ -171,7 +199,7 @@ function iniciarPartida() {
     var panelJuego = document.querySelector("#panel-juego");
     panelSeleccion.style.display = 'none';
     panelJuego.style.display = 'block';
-    juego.restablecer();
+    juego.restablecer();    
 }
 function irAInicio() {
     var panelSeleccion = document.querySelector("#panel-inicio");
