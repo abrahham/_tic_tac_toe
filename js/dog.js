@@ -2,7 +2,6 @@ class Juego {
     constructor(ficha) {
         this.ficha = ficha;
         this.fichaContraria = (this.ficha === 'x') ? 'o' : 'x';
-        this.restablecer();
         this.numeroPartidasJugadas = 0;
         this.movsGanadores = [
             {pini : 0, pmed: 1, pfin: 2},
@@ -25,6 +24,9 @@ class Juego {
             panel.classList.remove("b-circulo","b-cruz","b-empatado","b-cancelado");
         });
         this.desmarcarBotonesVictoria();
+        this.victorias = {
+            enemigo: 0, jugador: 0, enemigoIndices:[], jugadorIndices:[]
+        }
     }
     obtenerNumeroDeTiros() {
         /* Obtiene el contador de tiros de un juego individual */
@@ -43,7 +45,7 @@ class Juego {
         this.textoJuego("");      
         this.desmarcarBotonesVictoria();
         var moneda = Math.floor(Math.random() * 2);
-        if(moneda == 0) this.tiroEnemigo(); else this.textoJuego("Tu turno");
+        if(moneda == 0) this.tiroEnemigo(); else this.textoJuego("Tu turno");        
     }
     tirar(e, posicion) {
         this.tablero[posicion] = this.ficha;
@@ -193,8 +195,8 @@ class Juego {
 }
 var juego;
 var ficha;
-function iniciarPartida() {
-    juego = new Juego(ficha);
+function iniciarPartida() {    
+    juego = new Juego(ficha != undefined ? ficha : 'o');
     var panelSeleccion = document.querySelector("#panel-inicio");
     var panelJuego = document.querySelector("#panel-juego");
     panelSeleccion.style.display = 'none';
@@ -202,14 +204,14 @@ function iniciarPartida() {
     juego.restablecer();    
 }
 function irAInicio() {
+    juego.borrar();    
     var panelSeleccion = document.querySelector("#panel-inicio");
     var panelJuego = document.querySelector("#panel-juego");
     panelSeleccion.style.display = 'flex';
     panelJuego.style.display = 'none';
     document.querySelectorAll("#panel-inicio .btn").forEach(
         boton => boton.style.backgroundColor = 'transparent'
-    );
-    juego.borrar();
+    );    
 }
 function elegirFicha(e) {
     document.querySelectorAll("#panel-inicio .btn").forEach(boton => boton.style.backgroundColor = 'transparent'); 
